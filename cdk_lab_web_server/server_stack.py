@@ -69,5 +69,6 @@ class ServerStack(Stack):
         # Load balancer that distributes requests to the web servers
         alb = elbv2.ApplicationLoadBalancer(self, "cdk_lab_alb", vpc=vpc, internet_facing=True)
         listener = alb.add_listener("HttpListener", port=80)
+        alb.connections.allow_to(web_sg, ec2.Port.tcp(80))  # let the load balancer reach the web servers
         listener.add_targets("WebServers", port=80,
                              targets=[targets.InstanceTarget(inst, 80) for inst in web_instances])
